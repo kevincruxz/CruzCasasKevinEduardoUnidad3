@@ -62,5 +62,85 @@ namespace SH1_Back.Controllers
             await DBContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok" });
         }
+
+        [HttpPost("registrar_usuario")]
+        public async Task<ActionResult> AddUsuario([FromBody] Usuario usuario)
+        {
+            var existe_email = await DBContext.Usuarios
+                .Where(u => u.Email == usuario.Email)
+                .Select(u => new
+                {
+                    Email = u.Email
+                })
+                .FirstOrDefaultAsync();
+        
+            if (existe_email != null)
+            {
+                return NotFound(new { mensaje = "Usuario ya registrado" });
+            }
+        
+            await DBContext.Usuarios.AddAsync(usuario);
+            await DBContext.SaveChangesAsync();
+            return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok" });
+        }
+        
+        [HttpPost("login")]
+        public async Task<ActionResult> AddUsuario([FromBody] LoginDTO datos_login)
+        {
+            if (datos_login == null || string.IsNullOrEmpty(datos_login.Email) || string.IsNullOrEmpty(datos_login.Password))
+            {
+                return BadRequest(new { mensaje = "Campos no completados" });
+            }
+        
+            var usuario = await DBContext.Usuarios
+                .Where(u => u.Email == datos_login.Email && u.Password == datos_login.Password)
+                .Select(u => new
+                {
+                    Id = u.Id,
+                    Nombre = u.Nombre,
+                    Apellidos = u.Apellidos,
+                    Email = u.Email
+                })
+                .FirstOrDefaultAsync();
+        
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "Email o contraseña incorrecta(s)" });
+            }
+        
+            return Ok(new
+            {
+                mensaje = "success",
+                data = usuario
+            });
+        }
+        
+        [HttpGet]
+        [Route("verify_email/{email}")]
+        public async Task<ActionResult> VerifyEmail(string email)
+        {
+            if (String.IsNullOrEmpty(email)) 
+                return BadRequest(new { mensaje = "Email no ingresado" });
+        
+            var verifyEmail = await DBContext.Usuarios.FirstOrDefaultAsync(p => p.Email == email);
+        
+            if (verifyEmail == null)
+            {
+                return BadRequest(new { mensaje = "Email no encontrado" });
+            }
+        
+            return StatusCode(StatusCodes.Status200OK, verifyEmail);
+        }
+        
+        [HttpPut]
+        [Route("actualizar_contraseña/{email}&{password}")]
+        public async Task<ActionResult> EditContraseña(string email, string password)
+        {
+            var cuenta = await DBContext.Usuarios.FirstOrDefaultAsync(p => p.Email == email);
+        
+            cuenta.Password = password;
+            await DBContext.SaveChangesAsync();
+            return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok" });
+        }
     }
 }
