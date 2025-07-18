@@ -20,11 +20,16 @@ const Products = ({ abrirModal, cerrarModal, estado, cambiarRefresh, refresh }) 
         fetchProductos();
     }, [refresh]);
 
+    const user = JSON.parse(localStorage.getItem('user'));
+
     return (
         <div className='bg-black w-100 p-0 contenedor-productos'>
             <div className='productos container'>
                 <h2 className='text-center my-5 pt-4'>Nuestros Burros</h2>
-                <button className='btn btn-primary mb-3' onClick={abrirModal}>Agregar Producto</button>
+                {(user && user.email === "admin@admin.com") && (
+                    <button className='btn btn-primary mb-3' onClick={abrirModal}>Agregar Producto</button>
+                )}
+                
                 <div className='d-flex gap-5 flex-wrap justify-content-around'>
                     {
                         listaProductos.length === 0 ? (

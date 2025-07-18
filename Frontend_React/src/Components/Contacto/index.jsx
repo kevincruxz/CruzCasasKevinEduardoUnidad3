@@ -3,12 +3,19 @@ import Nav from '../Nav';
 import Menu from '../Menu';
 import { useState } from 'react';
 import React from 'react';
+import { Link, Navigate } from 'react-router-dom';
 
 export default function Contacto() {
-      const [menuAbierto, setMenuAbierto] = useState(false);
-    
-      const abrirMenu = () => setMenuAbierto(true);
-      const cerrarMenu = () => setMenuAbierto(false);
+    const [menuAbierto, setMenuAbierto] = useState(false);
+
+    const abrirMenu = () => setMenuAbierto(true);
+    const cerrarMenu = () => setMenuAbierto(false);
+
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user) {
+        return <Navigate to="/" />
+    }
 
     return (
         <div className='contacto'>

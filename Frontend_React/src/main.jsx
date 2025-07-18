@@ -7,6 +7,7 @@ import Ayuda from './Components/Ayuda/index.jsx'
 import Contacto from './Components/Contacto/index.jsx'
 import Buzon from './Components/Buzon/index.jsx'
 import SuccessPage from './Components/SuccessPage/index.jsx'
+import PasswordOlvidado from './Components/PasswordOlvidado/index.jsx'
 
 const router = createBrowserRouter([
   {path: '/', element: <App />},
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
   {path: '/contacto', element: <Contacto />},
   {path: '/buzon', element: <Buzon />},
   {path: '/exito', element: <SuccessPage />},
+  {path: '/contraseña_olvidada', element: <PasswordOlvidado />},
 ])
 
 createRoot(document.getElementById('root')).render(

@@ -8,12 +8,20 @@ import Typewriter from 'typewriter-effect';
 
 const Main = () => {
     const [loginAbierto, setLoginAbierto] = useState(true)
+    const [estaLogeado, setEstaLogeado] = useState(false)
 
     const abrirLogin = () => setLoginAbierto(true)
 
     const cerrarLogin = () => setLoginAbierto(false)
 
     const imageRef = useRef(null)
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setEstaLogeado(false);
+    };
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         gsap.fromTo(
@@ -32,6 +40,10 @@ const Main = () => {
                 delay: 0.5,
             }
         );
+
+        if (user) {
+            setEstaLogeado(true)
+        }
     }, []);
 
     return (
@@ -46,9 +58,35 @@ const Main = () => {
                         }}
                     />
                 </h4>
-                <button className={`btn me-2 ${loginAbierto ? 'btn-secondary' : 'btn-primary'}`} onClick={cerrarLogin}>Registrarse</button>
-                <button className={`btn ${loginAbierto ? 'btn-primary' : 'btn-secondary'}`} onClick={abrirLogin}>Iniciar Sesion</button>
-                {loginAbierto ? <Login /> : <Register />}
+                {estaLogeado && user ? (
+                    <div className="card" style={{ maxWidth: '400px' }}>
+                        <div className="card-body">
+                            <h5 className="card-title">Bienvenido, {user.nombre + " " + user.apellidos}</h5>
+                            <p className="card-text"><strong>Nombre:</strong> {user.nombre}</p>
+                            <p className="card-text"><strong>Apellidos:</strong> {user.apellidos}</p>
+                            <p className="card-text"><strong>Email:</strong> {user.email}</p>
+                            <button className="btn btn-danger" onClick={handleLogout}>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <button
+                            className={`btn me-2 ${loginAbierto ? 'btn-secondary' : 'btn-primary'}`}
+                            onClick={cerrarLogin}
+                        >
+                            Registrarse
+                        </button>
+                        <button
+                            className={`btn ${loginAbierto ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={abrirLogin}
+                        >
+                            Iniciar Sesión
+                        </button>
+                        {loginAbierto ? <Login logeado={setEstaLogeado} /> : <Register />}
+                    </>
+                )}
             </div>
             <img src='./img/burrito.png' className='burrote' ref={imageRef} />
         </div>
